@@ -37,7 +37,7 @@ const Admin = () => {
           api.get('/admin/users'),
           api.get('/admin/stats')
         ]);
-        setUsers(usersResponse.data);
+        setUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
         setStats(statsResponse.data);
       } catch (error) {
         console.error(error);

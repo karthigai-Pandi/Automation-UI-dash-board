@@ -47,11 +47,13 @@ const EnergyMeter = () => {
     const fetchData = async () => {
       try {
         const response = await api.get('/energy');
-        const payload = response.data.map((item: any) => ({
-          ...item,
-          timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        }));
-        setData(payload);
+        if (Array.isArray(response.data)) {
+          const payload = response.data.map((item: any) => ({
+            ...item,
+            timestamp: new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          }));
+          setData(payload);
+        }
       } catch (error) {
         console.error(error);
       }

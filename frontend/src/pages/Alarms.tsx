@@ -20,7 +20,12 @@ const Alarms = () => {
     const fetchAlarms = async () => {
       try {
         const response = await api.get('/alarms');
-        setAlarms(response.data.map((item: any) => ({ ...item, timestamp: new Date(item.timestamp).toLocaleString() })));
+        if (Array.isArray(response.data)) {
+          setAlarms(response.data.map((item: any) => ({ ...item, timestamp: new Date(item.timestamp).toLocaleString() })));
+        } else {
+          console.warn('Expected array for alarms, received:', response.data);
+          setAlarms([]);
+        }
       } catch (error) {
         console.error(error);
       } finally {

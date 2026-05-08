@@ -49,7 +49,11 @@ const AHU = () => {
     const fetchData = async () => {
       try {
         const response = await api.get('/ahu');
-        setAhuData(response.data);
+        if (Array.isArray(response.data)) {
+          setAhuData(response.data);
+        } else {
+          setAhuData(generateMockAHU());
+        }
       } catch (error) {
         console.error('Failed to fetch AHU data:', error);
         setAhuData(generateMockAHU());

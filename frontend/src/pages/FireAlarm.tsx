@@ -64,11 +64,16 @@ const FireAlarm = () => {
     const fetchData = async () => {
       try {
         const response = await api.get('/fire');
-        setStatus(response.data.map((item: any) => ({
-          ...item,
-          timestamp: new Date(item.timestamp).toLocaleString(),
-          zone: item.zone || 'Unknown Zone'
-        })));
+        if (Array.isArray(response.data)) {
+          setStatus(response.data.map((item: any) => ({
+            ...item,
+            timestamp: new Date(item.timestamp).toLocaleString(),
+            zone: item.zone || 'Unknown Zone'
+          })));
+        } else {
+          console.warn('Expected array for fire alerts, received:', response.data);
+          setStatus(defaultStatus);
+        }
       } catch (error) {
         console.error(error);
       } finally {
