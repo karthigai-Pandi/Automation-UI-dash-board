@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
@@ -10,6 +11,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../../frontend/dist')));
 
 // Routes
 const authRoutes = require('./routes/auth');
@@ -37,6 +41,11 @@ app.use('/api/equipment', equipmentRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/trends', trendsRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Catch all handler: send back React's index.html file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'));
+});
 
 app.get('/', (req, res) => {
   res.json({ message: 'Smart Building Monitoring Dashboard API' });
