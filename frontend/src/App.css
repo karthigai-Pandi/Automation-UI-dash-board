@@ -1,0 +1,8 @@
+/* App-specific styles are intentionally minimal since layout is built with Tailwind CSS */
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
