@@ -283,21 +283,21 @@ const EnergyMeter = () => {
                 <Zap className="h-4 w-4 text-blue-400" />
                 <p className="text-sm text-blue-400 font-medium">Voltage</p>
               </div>
-              <p className="text-2xl font-bold text-white">{data[0]?.voltage.toFixed(1) || 0} <span className="text-sm text-gray-400">V</span></p>
+              <p className="text-2xl font-bold text-white">{data[0]?.voltage?.toFixed(1) || '0.0'} <span className="text-sm text-gray-400">V</span></p>
             </div>
             <div className="rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-4 border border-green-500/20">
               <div className="flex items-center gap-2 mb-2">
                 <Activity className="h-4 w-4 text-green-400" />
                 <p className="text-sm text-green-400 font-medium">Current</p>
               </div>
-              <p className="text-2xl font-bold text-white">{data[0]?.current.toFixed(1) || 0} <span className="text-sm text-gray-400">A</span></p>
+              <p className="text-2xl font-bold text-white">{data[0]?.current?.toFixed(1) || '0.0'} <span className="text-sm text-gray-400">A</span></p>
             </div>
             <div className="rounded-2xl bg-gradient-to-r from-purple-500/10 to-indigo-500/10 p-4 border border-purple-500/20">
               <div className="flex items-center gap-2 mb-2">
                 <Gauge className="h-4 w-4 text-purple-400" />
                 <p className="text-sm text-purple-400 font-medium">Power Factor</p>
               </div>
-              <p className="text-2xl font-bold text-white">{data[0]?.power_factor.toFixed(2) || 0.00}</p>
+              <p className="text-2xl font-bold text-white">{data[0]?.power_factor?.toFixed(2) || '0.00'}</p>
             </div>
           </div>
         </div>

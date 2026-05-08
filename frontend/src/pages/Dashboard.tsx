@@ -78,7 +78,7 @@ const Dashboard = () => {
         </div>
         <div className="bg-gray-800 p-6 rounded-3xl shadow-xl border border-slate-800">
           <p className="text-sm uppercase tracking-[0.2em] text-amber-400">Energy</p>
-          <p className="text-4xl font-semibold text-white mt-4">{data?.energyConsumption.total?.toFixed(0) || '0'} kWh</p>
+          <p className="text-4xl font-semibold text-white mt-4">{data?.energyConsumption?.total?.toFixed(0) || '0'} kWh</p>
           <p className="text-sm text-gray-400 mt-2">Last 24h energy consumption summary.</p>
         </div>
       </div>
@@ -111,15 +111,15 @@ const Dashboard = () => {
           <div className="mt-4 space-y-4">
             <div className="rounded-3xl bg-slate-950/40 p-4">
               <p className="text-sm text-gray-400">Avg temp today</p>
-              <p className="text-3xl text-white font-semibold">{data?.temperatureSummary.average.toFixed(1)}°C</p>
+              <p className="text-3xl text-white font-semibold">{data?.temperatureSummary?.average?.toFixed(1) || '0.0'}°C</p>
             </div>
             <div className="rounded-3xl bg-slate-950/40 p-4">
               <p className="text-sm text-gray-400">Min / Max</p>
-              <p className="text-white">{data?.temperatureSummary.min.toFixed(1)}°C / {data?.temperatureSummary.max.toFixed(1)}°C</p>
+              <p className="text-white">{(data?.temperatureSummary?.min ?? 0).toFixed(1)}°C / {(data?.temperatureSummary?.max ?? 0).toFixed(1)}°C</p>
             </div>
             <div className="rounded-3xl bg-slate-950/40 p-4">
               <p className="text-sm text-gray-400">Energy efficiency</p>
-              <p className="text-white">{data?.energyConsumption.average?.toFixed(2) || '0.00'} kWh per device</p>
+              <p className="text-white">{data?.energyConsumption?.average?.toFixed(2) || '0.00'} kWh per device</p>
             </div>
           </div>
         </div>

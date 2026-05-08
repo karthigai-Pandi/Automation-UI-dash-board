@@ -64,15 +64,15 @@ const Admin = () => {
           <div className="mt-5 grid gap-4">
             <div className="rounded-3xl bg-slate-950/50 p-5">
               <p className="text-sm text-gray-400">Active Users</p>
-              <p className="text-3xl text-white mt-2">{stats?.users.active_users || 0}</p>
+              <p className="text-3xl text-white mt-2">{stats?.users?.active_users || 0}</p>
             </div>
             <div className="rounded-3xl bg-slate-950/50 p-5">
               <p className="text-sm text-gray-400">Total Users</p>
-              <p className="text-3xl text-white mt-2">{stats?.users.total_users || 0}</p>
+              <p className="text-3xl text-white mt-2">{stats?.users?.total_users || 0}</p>
             </div>
             <div className="rounded-3xl bg-slate-950/50 p-5">
               <p className="text-sm text-gray-400">Admin Accounts</p>
-              <p className="text-3xl text-white mt-2">{stats?.users.admin_count || 0}</p>
+              <p className="text-3xl text-white mt-2">{stats?.users?.admin_count || 0}</p>
             </div>
           </div>
         </div>
@@ -82,15 +82,15 @@ const Admin = () => {
           <div className="mt-5 grid gap-4">
             <div className="rounded-3xl bg-slate-950/50 p-5">
               <p className="text-sm text-gray-400">Total Equipment</p>
-              <p className="text-3xl text-white mt-2">{stats?.equipment.total_equipment || 0}</p>
+              <p className="text-3xl text-white mt-2">{stats?.equipment?.total_equipment || 0}</p>
             </div>
             <div className="rounded-3xl bg-slate-950/50 p-5">
               <p className="text-sm text-gray-400">Online Equipment</p>
-              <p className="text-3xl text-white mt-2">{stats?.equipment.online_equipment || 0}</p>
+              <p className="text-3xl text-white mt-2">{stats?.equipment?.online_equipment || 0}</p>
             </div>
             <div className="rounded-3xl bg-slate-950/50 p-5">
               <p className="text-sm text-gray-400">Active Alarms</p>
-              <p className="text-3xl text-white mt-2">{stats?.alarms.unacknowledged_alarms || 0}</p>
+              <p className="text-3xl text-white mt-2">{stats?.alarms?.unacknowledged_alarms || 0}</p>
             </div>
           </div>
         </div>
