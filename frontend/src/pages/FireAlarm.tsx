@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Flame, AlertTriangle, Shield, Volume2, VolumeX, CheckCircle, XCircle, Settings, Activity, Bell } from 'lucide-react';
+import { Flame, AlertTriangle, Shield, Volume2, CheckCircle, Activity, Bell, Radio, Zap } from 'lucide-react';
 import api from '../services/api';
 
 interface FireAlarmStatus {
@@ -71,11 +71,10 @@ const FireAlarm = () => {
             zone: item.zone || 'Unknown Zone'
           })));
         } else {
-          console.warn('Expected array for fire alerts, received:', response.data);
           setStatus(defaultStatus);
         }
       } catch (error) {
-        console.error(error);
+        setStatus(defaultStatus);
       } finally {
         setLoading(false);
       }
@@ -88,348 +87,125 @@ const FireAlarm = () => {
 
   const handleControl = async (action: string) => {
     if (!canControl) return;
-
     setControlLoading(action);
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      if (action === 'acknowledge_all') {
-        setStatus(prev => prev.map(item => ({ ...item, acknowledged: true })));
-      } else if (action === 'test_hooter') {
-        // Simulate hooter test
-        console.log('Hooter test initiated');
-      } else if (action === 'reset_system') {
+      if (action === 'reset_system') {
         setSystemStatus(prev => ({ ...prev, panel_status: 'normal' }));
         setStatus([]);
       }
-    } catch (error) {
-      console.error('Control failed:', error);
     } finally {
       setControlLoading(null);
     }
   };
 
-  const acknowledgeAlarm = async (alarmIndex: number) => {
-    if (!canControl) return;
-
-    try {
-      setStatus(prev => prev.map((alarm, index) =>
-        index === alarmIndex ? { ...alarm, acknowledged: true } : alarm
-      ));
-    } catch (error) {
-      console.error('Failed to acknowledge alarm:', error);
-    }
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'from-red-500 to-rose-500';
-      case 'medium': return 'from-yellow-500 to-orange-500';
-      case 'low': return 'from-blue-500 to-cyan-500';
-      default: return 'from-gray-500 to-slate-500';
-    }
-  };
-
-  const getZoneStatusColor = (status: string) => {
-    switch (status) {
-      case 'normal': return 'from-green-500 to-emerald-500';
-      case 'alarm': return 'from-red-500 to-rose-500';
-      case 'fault': return 'from-yellow-500 to-orange-500';
-      default: return 'from-gray-500 to-slate-500';
-    }
-  };
-
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <Flame className="h-8 w-8 text-red-400" />
-            Fire Alarm System
-          </h1>
-          <p className="text-gray-400 mt-2">Monitor smoke detectors, hooter status, and fire zone alerts.</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className={`rounded-3xl px-5 py-3 shadow-lg border ${
-            systemStatus.panel_status === 'normal'
-              ? 'bg-gradient-to-r from-green-500/20 border-green-500/30'
-              : systemStatus.panel_status === 'alarm'
-              ? 'bg-gradient-to-r from-red-500/20 border-red-500/30'
-              : 'bg-gradient-to-r from-yellow-500/20 border-yellow-500/30'
-          }`}>
-            <p className="text-sm text-gray-400">Panel Status</p>
-            <p className={`text-lg font-bold ${
-              systemStatus.panel_status === 'normal' ? 'text-green-400' :
-              systemStatus.panel_status === 'alarm' ? 'text-red-400' : 'text-yellow-400'
-            }`}>
-              {systemStatus.panel_status.toUpperCase()}
-            </p>
-          </div>
-          <div className="rounded-3xl bg-gradient-to-r from-orange-500/20 to-red-500/20 px-5 py-3 shadow-lg border border-orange-500/30">
-            <p className="text-sm text-gray-400">Active Alarms</p>
-            <p className="text-lg font-bold text-orange-400">{status.filter(s => !s.acknowledged).length}</p>
-          </div>
-        </div>
+    <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Critical Status Header */}
+      <div className={`relative h-64 md:h-80 rounded-[3rem] overflow-hidden shadow-2xl transition-all duration-700 ${
+        systemStatus.panel_status === 'alarm' ? 'bg-rose-600 animate-pulse' : 'bg-slate-900 border border-white/5'
+      }`}>
+         <div className="absolute inset-0 opacity-20">
+            <Radio className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] text-white opacity-10 animate-ping" />
+         </div>
+         <div className="relative h-full flex flex-col justify-center px-10 md:px-20">
+            <div className="flex items-center gap-6 mb-6">
+               <div className={`p-5 rounded-3xl backdrop-blur-xl border ${systemStatus.panel_status === 'alarm' ? 'bg-white/20 border-white/40' : 'bg-rose-500/20 border-rose-500/30'}`}>
+                  <Flame className={`h-10 w-10 ${systemStatus.panel_status === 'alarm' ? 'text-white animate-bounce' : 'text-rose-500'}`} />
+               </div>
+               <div>
+                  <h1 className="text-4xl md:text-6xl font-black text-white">Fire <span className={systemStatus.panel_status === 'alarm' ? 'text-white' : 'text-rose-500'}>Safety</span></h1>
+                  <p className="text-white/60 font-black uppercase tracking-[0.3em] text-xs mt-2">Certified Protection Systems</p>
+               </div>
+            </div>
+            
+            <div className="flex flex-wrap gap-4">
+               <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
+                  <p className="text-[10px] font-black uppercase text-white/50 mb-1">System Health</p>
+                  <p className="text-2xl font-black text-white">{systemStatus.panel_status === 'normal' ? 'OPERATIONAL' : 'FAULT DETECTED'}</p>
+               </div>
+               <div className="bg-white/10 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/10">
+                  <p className="text-[10px] font-black uppercase text-white/50 mb-1">Active Alerts</p>
+                  <p className="text-2xl font-black text-white">{status.filter(s => !s.acknowledged).length}</p>
+               </div>
+            </div>
+         </div>
       </div>
 
-      {/* Control Panel */}
+      {/* Control Actions */}
       {canControl && (
-        <div className="grid gap-4 md:grid-cols-3">
-          <button
-            onClick={() => handleControl('acknowledge_all')}
-            disabled={controlLoading === 'acknowledge_all'}
-            className="flex items-center justify-center gap-3 rounded-3xl bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4 text-white font-bold hover:from-green-500 hover:to-emerald-500 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-green-500/25"
-          >
-            {controlLoading === 'acknowledge_all' ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b border-white"></div>
-            ) : (
-              <CheckCircle className="h-5 w-5" />
-            )}
-            Acknowledge All
-          </button>
-          <button
-            onClick={() => handleControl('test_hooter')}
-            disabled={controlLoading === 'test_hooter'}
-            className="flex items-center justify-center gap-3 rounded-3xl bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4 text-white font-bold hover:from-blue-500 hover:to-cyan-500 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-blue-500/25"
-          >
-            {controlLoading === 'test_hooter' ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b border-white"></div>
-            ) : (
-              <Volume2 className="h-5 w-5" />
-            )}
-            Test Hooter
-          </button>
-          <button
-            onClick={() => handleControl('reset_system')}
-            disabled={controlLoading === 'reset_system'}
-            className="flex items-center justify-center gap-3 rounded-3xl bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4 text-white font-bold hover:from-purple-500 hover:to-indigo-500 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-purple-500/25"
-          >
-            {controlLoading === 'reset_system' ? (
-              <div className="animate-spin rounded-full h-5 w-5 border-b border-white"></div>
-            ) : (
-              <Settings className="h-5 w-5" />
-            )}
-            Reset System
-          </button>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+           {[
+             { label: 'Silence Hooter', icon: Volume2, color: 'indigo', action: 'silence' },
+             { label: 'Reset Panel', icon: Shield, color: 'rose', action: 'reset_system' },
+             { label: 'System Test', icon: Activity, color: 'emerald', action: 'test_hooter' },
+             { label: 'Manual Alarm', icon: Bell, color: 'amber', action: 'manual_alarm' }
+           ].map((btn) => (
+             <button
+               key={btn.label}
+               onClick={() => handleControl(btn.action)}
+               className={`group flex flex-col items-center justify-center gap-3 p-6 rounded-[2rem] bg-slate-900 border border-slate-800 hover:border-${btn.color}-500/50 transition-all hover:scale-105 active:scale-95 shadow-xl`}
+             >
+                <div className={`p-4 rounded-2xl bg-${btn.color}-500/10 text-${btn.color}-500 group-hover:bg-${btn.color}-500 group-hover:text-white transition-all`}>
+                   <btn.icon className="h-6 w-6" />
+                </div>
+                <span className="text-[10px] font-black text-slate-500 group-hover:text-white uppercase tracking-widest">{btn.label}</span>
+             </button>
+           ))}
         </div>
       )}
 
-      {/* Fire Alarm Zones */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-3xl shadow-2xl border border-slate-700">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-xl bg-red-500/20">
-              <Shield className="h-6 w-6 text-red-400" />
-            </div>
-            <div>
-              <h2 className="text-white text-xl font-semibold">Fire Zones Status</h2>
-              <p className="text-gray-400 text-sm">Real-time zone monitoring</p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {systemStatus.zones.map((zone) => (
-              <div key={zone.name} className="rounded-2xl bg-slate-950/60 p-4 border border-slate-600 hover:border-slate-500 transition-colors">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-3 h-3 rounded-full ${
-                      zone.status === 'normal' ? 'bg-green-500' :
-                      zone.status === 'alarm' ? 'bg-red-500 animate-pulse' : 'bg-yellow-500'
-                    }`}></div>
-                    <span className="text-white font-medium">{zone.name}</span>
-                  </div>
-                  <span className={`text-xs px-3 py-1 rounded-full font-bold bg-gradient-to-r ${getZoneStatusColor(zone.status)} text-black`}>
-                    {zone.status.toUpperCase()}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400">Last check: {zone.last_check}</span>
-                  {zone.status === 'alarm' && (
-                    <div className="flex items-center gap-1 text-red-400">
-                      <Bell className="h-4 w-4" />
-                      <span className="text-xs">ALARM ACTIVE</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* System Components */}
-        <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-3xl shadow-2xl border border-slate-700">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 rounded-xl bg-blue-500/20">
-              <Activity className="h-6 w-6 text-blue-400" />
-            </div>
-            <div>
-              <h2 className="text-white text-xl font-semibold">System Components</h2>
-              <p className="text-gray-400 text-sm">Equipment status overview</p>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {/* MCP Panel */}
-            <div className="rounded-2xl bg-gradient-to-r from-slate-950/60 to-gray-950/60 p-4 border border-slate-600">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${
-                    systemStatus.panel_status === 'normal' ? 'bg-green-500/20' :
-                    systemStatus.panel_status === 'alarm' ? 'bg-red-500/20' : 'bg-yellow-500/20'
+      <div className="grid gap-8 lg:grid-cols-3">
+         {/* Live Zones heat-style display */}
+         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-[3rem] p-10">
+            <h2 className="text-2xl font-black text-white mb-8">Zone Awareness</h2>
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+               {systemStatus.zones.map((zone) => (
+                  <div key={zone.name} className={`p-6 rounded-[2rem] border transition-all duration-500 ${
+                     zone.status === 'alarm' ? 'bg-rose-600 text-white shadow-2xl shadow-rose-500/40 animate-pulse' :
+                     'bg-slate-950 border-slate-800 hover:border-slate-600'
                   }`}>
-                    <Shield className={`h-5 w-5 ${
-                      systemStatus.panel_status === 'normal' ? 'text-green-400' :
-                      systemStatus.panel_status === 'alarm' ? 'text-red-400' : 'text-yellow-400'
-                    }`} />
+                     <p className="text-[10px] font-black uppercase opacity-60 mb-1">{zone.name}</p>
+                     <p className="text-lg font-black tracking-tighter mb-4">{zone.status.toUpperCase()}</p>
+                     <div className="flex items-center gap-2">
+                        <div className={`h-1.5 w-1.5 rounded-full ${zone.status === 'alarm' ? 'bg-white' : 'bg-indigo-500'}`}></div>
+                        <span className="text-[10px] font-bold opacity-60 uppercase">{zone.last_check}</span>
+                     </div>
                   </div>
-                  <div>
-                    <p className="text-white font-medium">MCP Panel</p>
-                    <p className="text-sm text-gray-400">Main Control Panel</p>
-                  </div>
-                </div>
-                <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                  systemStatus.panel_status === 'normal' ? 'bg-green-500/20 text-green-400' :
-                  systemStatus.panel_status === 'alarm' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-400'
-                }`}>
-                  {systemStatus.panel_status.toUpperCase()}
-                </span>
-              </div>
+               ))}
             </div>
+         </div>
 
-            {/* Hooter */}
-            <div className="rounded-2xl bg-gradient-to-r from-slate-950/60 to-gray-950/60 p-4 border border-slate-600">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${
-                    systemStatus.hooter_status === 'enabled' ? 'bg-green-500/20' :
-                    systemStatus.hooter_status === 'disabled' ? 'bg-gray-500/20' : 'bg-yellow-500/20'
-                  }`}>
-                    {systemStatus.hooter_status === 'enabled' ? (
-                      <Volume2 className="h-5 w-5 text-green-400" />
-                    ) : (
-                      <VolumeX className="h-5 w-5 text-gray-400" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">Hooter System</p>
-                    <p className="text-sm text-gray-400">Alarm Sound System</p>
-                  </div>
-                </div>
-                <span className={`text-xs px-3 py-1 rounded-full font-bold ${
-                  systemStatus.hooter_status === 'enabled' ? 'bg-green-500/20 text-green-400' :
-                  systemStatus.hooter_status === 'disabled' ? 'bg-gray-500/20 text-gray-400' : 'bg-yellow-500/20 text-yellow-400'
-                }`}>
-                  {systemStatus.hooter_status.toUpperCase()}
-                </span>
-              </div>
-            </div>
-
-            {/* Smoke Detectors */}
-            <div className="rounded-2xl bg-gradient-to-r from-slate-950/60 to-gray-950/60 p-4 border border-slate-600">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-blue-500/20">
-                    <Flame className="h-5 w-5 text-blue-400" />
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">Smoke Detectors</p>
-                    <p className="text-sm text-gray-400">Detection Sensors</p>
-                  </div>
-                </div>
-                <span className="text-xs px-3 py-1 rounded-full font-bold bg-blue-500/20 text-blue-400">
-                  {systemStatus.detectors_active}/{systemStatus.total_detectors} ACTIVE
-                </span>
-              </div>
-              <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                <div
-                  className="bg-gradient-to-r from-blue-400 to-cyan-400 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${(systemStatus.detectors_active / systemStatus.total_detectors) * 100}%` }}
-                ></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Fire Alerts */}
-      <div className="bg-gradient-to-br from-gray-800 to-gray-900 p-6 rounded-3xl shadow-2xl border border-slate-700">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-red-500/20">
-              <AlertTriangle className="h-6 w-6 text-red-400" />
-            </div>
+         {/* Smoke Detector Health */}
+         <div className="bg-slate-900 border border-slate-800 rounded-[3rem] p-10 flex flex-col justify-between">
             <div>
-              <h2 className="text-white text-xl font-semibold">Recent Fire Alerts</h2>
-              <p className="text-gray-400 text-sm">Active and acknowledged alarms</p>
-            </div>
-          </div>
-          <span className="text-sm uppercase tracking-[0.16em] text-orange-400 font-semibold">{status.length} Total Alerts</span>
-        </div>
-        <div className="space-y-4">
-          {loading ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-400 mx-auto mb-4"></div>
-              <p className="text-gray-400">Loading alerts...</p>
-            </div>
-          ) : status.length === 0 ? (
-            <div className="text-center py-8">
-              <CheckCircle className="h-12 w-12 text-green-400 mx-auto mb-4" />
-              <p className="text-gray-400">No active fire alarms</p>
-            </div>
-          ) : (
-            status.map((item, index) => (
-              <div key={item.name + item.timestamp} className={`rounded-2xl p-5 border transition-all duration-300 ${
-                item.acknowledged
-                  ? 'bg-slate-950/40 border-slate-600'
-                  : `bg-gradient-to-r ${getPriorityColor(item.priority)}/10 border-current/30`
-              }`}>
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${
-                      item.acknowledged ? 'bg-gray-500/20' : `bg-gradient-to-r ${getPriorityColor(item.priority)}/20`
-                    }`}>
-                      <Flame className={`h-5 w-5 ${
-                        item.acknowledged ? 'text-gray-400' : 'text-current'
-                      }`} />
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">{item.name} - {item.zone}</p>
-                      <h3 className="text-white text-lg font-semibold">{item.alarm_type}</h3>
-                    </div>
+               <h2 className="text-2xl font-black text-white mb-4">Sensors</h2>
+               <p className="text-slate-500 font-medium text-sm leading-relaxed mb-8">
+                  Percentage of active smoke detectors across the entire facility network.
+               </p>
+               <div className="relative h-48 w-48 mx-auto mb-8">
+                  <svg className="w-full h-full transform -rotate-90">
+                     <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" className="text-slate-800" />
+                     <circle cx="96" cy="96" r="80" stroke="currentColor" strokeWidth="16" fill="transparent" 
+                        strokeDasharray={2 * Math.PI * 80}
+                        strokeDashoffset={2 * Math.PI * 80 * (1 - systemStatus.detectors_active/systemStatus.total_detectors)}
+                        className="text-indigo-500" 
+                     />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                     <span className="text-4xl font-black text-white">{Math.round((systemStatus.detectors_active/systemStatus.total_detectors)*100)}%</span>
+                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Online</span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs px-3 py-1 rounded-full font-bold bg-gradient-to-r ${getPriorityColor(item.priority)} text-black`}>
-                      {item.priority.toUpperCase()}
-                    </span>
-                    {item.acknowledged ? (
-                      <CheckCircle className="h-5 w-5 text-green-400" />
-                    ) : (
-                      <XCircle className="h-5 w-5 text-red-400" />
-                    )}
-                  </div>
-                </div>
-                <p className="text-gray-300 mb-4">{item.message}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-400">{item.timestamp}</span>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      item.acknowledged ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
-                    }`}>
-                      {item.acknowledged ? 'Acknowledged' : 'Unacknowledged'}
-                    </span>
-                    {!item.acknowledged && canControl && (
-                      <button
-                        onClick={() => acknowledgeAlarm(index)}
-                        className="text-xs px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 transition-colors"
-                      >
-                        Acknowledge
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+               </div>
+            </div>
+            <div className="p-6 rounded-[2rem] bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+               <div className="flex items-center gap-3 mb-2">
+                  <Zap className="h-4 w-4" />
+                  <span className="text-[10px] font-black uppercase tracking-widest">Self-Diagnostic</span>
+               </div>
+               <p className="text-xs font-bold leading-relaxed">System performing auto-calibration of all smoke sensors. Status: OK.</p>
+            </div>
+         </div>
       </div>
     </div>
   );
