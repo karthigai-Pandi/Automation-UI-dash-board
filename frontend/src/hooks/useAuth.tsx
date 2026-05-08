@@ -38,6 +38,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (username: string, password: string) => {
     const response = await api.post('/auth/login', { username, password });
     const { token, user } = response.data;
+    
+    if (!token || !user) {
+      throw new Error('Invalid server response: Missing token or user data');
+    }
+    
     localStorage.setItem('token', token);
     setUser(user);
   };
