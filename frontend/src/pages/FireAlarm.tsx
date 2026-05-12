@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Flame, AlertTriangle, Shield, Volume2, CheckCircle, Activity, Bell, Radio, Zap } from 'lucide-react';
+import { Flame, Shield, Volume2, Activity, Bell, Radio, Zap } from 'lucide-react';
 import api from '../services/api';
 
 interface FireAlarmStatus {
@@ -55,8 +55,6 @@ const FireAlarm = () => {
   const { user } = useAuth();
   const [status, setStatus] = useState<FireAlarmStatus[]>(defaultStatus);
   const [systemStatus, setSystemStatus] = useState<FireSystemStatus>(mockSystemStatus);
-  const [loading, setLoading] = useState(true);
-  const [controlLoading, setControlLoading] = useState<string | null>(null);
 
   const canControl = user?.role === 'admin' || user?.role === 'operator';
 
@@ -75,8 +73,6 @@ const FireAlarm = () => {
         }
       } catch (error) {
         setStatus(defaultStatus);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -87,15 +83,10 @@ const FireAlarm = () => {
 
   const handleControl = async (action: string) => {
     if (!canControl) return;
-    setControlLoading(action);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      if (action === 'reset_system') {
-        setSystemStatus(prev => ({ ...prev, panel_status: 'normal' }));
-        setStatus([]);
-      }
-    } finally {
-      setControlLoading(null);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    if (action === 'reset_system') {
+      setSystemStatus(prev => ({ ...prev, panel_status: 'normal' }));
+      setStatus([]);
     }
   };
 

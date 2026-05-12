@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Fan, Thermometer, Users, Power, Settings, Zap, Home, Clock } from 'lucide-react';
+import { Fan, Thermometer, Users, Home, Clock } from 'lucide-react';
 
 interface FCUData {
   name: string;

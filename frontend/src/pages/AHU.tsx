@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Fan, Thermometer, Wind, AlertTriangle, Power, Settings, Zap, Droplets, Gauge } from 'lucide-react';
+import { Fan, Thermometer, Wind, Droplets, Gauge } from 'lucide-react';
 import api from '../services/api';
 
 interface AHUData {

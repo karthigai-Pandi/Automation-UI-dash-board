@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { Settings, Zap, Fuel, Thermometer, Gauge, Activity, Power, AlertTriangle, CheckCircle, Play, Square, RotateCcw, Clock, ShieldCheck } from 'lucide-react';
+import { Settings, Zap, Thermometer, Gauge, Activity, AlertTriangle, CheckCircle, Play, Square, Clock, ShieldCheck } from 'lucide-react';
 
 interface DGStatus {
   running_status: 'on' | 'off' | 'standby' | 'fault';

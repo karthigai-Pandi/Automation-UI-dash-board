@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { Zap, Activity, Gauge, Settings, TrendingUp, Cpu, BatteryCharging } from 'lucide-react';
+import { Zap, Activity, Gauge, TrendingUp, Cpu, BatteryCharging } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import api from '../services/api';
 
@@ -36,12 +35,8 @@ const mockMeters: MeterStatus[] = [
 ];
 
 const EnergyMeter = () => {
-  const { user } = useAuth();
   const [data, setData] = useState<EnergyReading[]>(generateMockEnergy());
-  const [meters, setMeters] = useState<MeterStatus[]>(mockMeters);
-  const [controlLoading, setControlLoading] = useState<string | null>(null);
-
-  const canControl = user?.role === 'admin' || user?.role === 'operator';
+  const [meters] = useState<MeterStatus[]>(mockMeters);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,23 +59,6 @@ const EnergyMeter = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const handleControl = async (meterName: string, action: string) => {
-    if (!canControl) return;
-    setControlLoading(`${meterName}-${action}`);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMeters(prev => prev.map(m => {
-        if (m.name === meterName) {
-           if (action === 'enable') return { ...m, status: 'online' };
-           if (action === 'disable') return { ...m, status: 'offline' };
-           if (action === 'maintenance') return { ...m, status: 'maintenance' };
-        }
-        return m;
-      }));
-    } finally {
-      setControlLoading(null);
-    }
-  };
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">

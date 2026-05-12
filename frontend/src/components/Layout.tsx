@@ -13,7 +13,6 @@ import {
   User,
   LogOut,
   Activity,
-  Shield,
   Bell,
   Menu,
   X
